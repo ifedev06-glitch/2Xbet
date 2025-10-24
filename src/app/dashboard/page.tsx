@@ -104,7 +104,7 @@ export default function BettingDashboard() {
           </div>
         </div>
 
-       {/* Bet Form */}
+{/* Bet Form */}
 <div className="bg-slate-900/50 border border-slate-700 rounded-2xl p-6 shadow-lg">
   <h3 className="text-xl font-semibold border-b border-slate-700 pb-4 mb-6">
     Place Your Bet
@@ -114,8 +114,8 @@ export default function BettingDashboard() {
   <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 flex gap-3 mb-6">
     <FaExclamationTriangle className="text-red-500 w-5 h-5 mt-1" />
     <p className="text-slate-300 text-sm">
-      Remember: <span className="font-semibold text-green-400">You Win → double your stake</span> 
-      , <span className="font-semibold text-orange-400">You Lose → we return half your stake</span>.
+      Remember: <span className="font-semibold text-green-400">You Win → double your stake</span>, 
+      <span className="font-semibold text-orange-400">You Lose → we return half your stake</span>.
     </p>
   </div>
 
@@ -129,8 +129,19 @@ export default function BettingDashboard() {
         id="betcode"
         type="text"
         placeholder="Enter your bet code"
-        value={betCode}
-        onChange={(e) => setBetCode(e.target.value)}
+        className="w-full p-3 rounded-lg bg-slate-800 border border-slate-600 focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-none placeholder:text-slate-500 text-white"
+      />
+    </div>
+
+    {/* Amount */}
+    <div>
+      <label htmlFor="amount" className="block text-sm font-semibold mb-2">
+        Stake Amount
+      </label>
+      <input
+        id="amount"
+        type="number"
+        placeholder="Enter amount to stake"
         className="w-full p-3 rounded-lg bg-slate-800 border border-slate-600 focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-none placeholder:text-slate-500 text-white"
       />
     </div>
@@ -142,44 +153,25 @@ export default function BettingDashboard() {
       </label>
       <select
         id="company"
-        value={selectedCompany}
-        onChange={(e) => setSelectedCompany(e.target.value)}
         className="w-full p-3 rounded-lg bg-slate-800 border border-slate-600 focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-none text-white"
       >
         <option value="">Choose sportsbook</option>
-        {BET_COMPANIES.map((company) => (
-          <option key={company.id} value={company.id}>
-            {company.name}
-          </option>
-        ))}
+        <option value="sportybet">SportyBet</option>
+        <option value="betking">BetKing</option>
+        <option value="betano">Betano</option>
+        <option value="bet9ja">Bet9ja</option>
+        <option value="paripesa">Paripesa</option>
+        <option value="1xbet">1XBet</option>
       </select>
     </div>
 
-    {/* Company Notice */}
-    {selectedCompanyData && (
-      <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 flex gap-3">
-        <FaExclamationTriangle className="text-red-500 w-5 h-5 mt-1" />
-        <div className="text-slate-300 text-sm">
-          <p className="font-semibold text-red-400 mb-1">{selectedCompanyData.name}</p>
-          <p>Your bet will be placed on this sportsbook. Ensure your account is active.</p>
-        </div>
-      </div>
-    )}
-
     {/* Submit */}
-    <button
-      onClick={handlePlaceBet}
-      disabled={!isFormValid || isLoading}
-      className={`w-full py-3 rounded-lg font-semibold transition ${
-        isFormValid
-          ? "bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800"
-          : "bg-slate-700 cursor-not-allowed"
-      }`}
-    >
-      {isLoading ? "Placing Bet..." : "Place Bet"}
+    <button className="w-full py-3 rounded-lg font-semibold bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 transition">
+      Place Bet
     </button>
   </div>
 </div>
+
 
 
 {/* Pending Bets */}
