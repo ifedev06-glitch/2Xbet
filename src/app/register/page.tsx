@@ -1,28 +1,57 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { FaUserAlt, FaPhoneAlt, FaLock, FaBolt } from "react-icons/fa"
+import { useState } from "react";
+import { FaUserAlt, FaPhoneAlt, FaLock, FaBolt } from "react-icons/fa";
+import { signupUser, SignupRequest, SignupResponse } from "@/app/lib/api";
+import { useRouter } from "next/navigation"; // if using Next.js App Router
 
 export default function SignupPage() {
-  const [fullname, setFullname] = useState("")
-  const [phone, setPhone] = useState("")
-  const [password, setPassword] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
+  const [fullname, setFullname] = useState("");
+  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [feedback, setFeedback] = useState<string | null>(null);
 
-  const handleSignup = () => {
-    if (!fullname.trim() || !phone.trim() || !password.trim()) return
-    setIsLoading(true)
-    setTimeout(() => {
-      setIsLoading(false)
-      alert("Account created successfully ✅")
-      setFullname("")
-      setPhone("")
-      setPassword("")
-      // redirect to login or dashboard here
-    }, 1500)
-  }
+  const router = useRouter();
 
-  const isFormValid = fullname.trim() && phone.trim() && password.trim()
+  const handleSignup = async () => {
+    if (!fullname.trim() || !phone.trim() || !password.trim()) return;
+
+    setIsLoading(true);
+    setFeedback(null);
+
+    try {
+      const payload: SignupRequest = {
+        name: fullname,
+        phoneNumber: phone,
+        password: password,
+      };
+      const data: SignupResponse = await signupUser(payload);
+
+      // store token
+      localStorage.setItem("authToken", data.token);
+
+      // show message
+      setFeedback(data.message);
+
+      // optionally redirect after a short delay
+      setTimeout(() => {
+        router.push("/"); // or your dashboard route
+      }, 1000);
+
+    } catch (error: any) {
+      console.error("Signup error:", error);
+      const msg = error.response?.data?.message || "Signup failed. Please try again.";
+      setFeedback(msg);
+    } finally {
+      setIsLoading(false);
+      setFullname("");
+      setPhone("");
+      setPassword("");
+    }
+  };
+
+  const isFormValid = fullname.trim() && phone.trim() && password.trim();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center p-4">
@@ -92,6 +121,13 @@ export default function SignupPage() {
           </div>
         </div>
 
+        {/* Feedback message */}
+        {feedback && (
+          <p className="text-center text-sm text-green-400">
+            {feedback}
+          </p>
+        )}
+
         {/* Signup Button */}
         <button
           onClick={handleSignup}
@@ -107,9 +143,9 @@ export default function SignupPage() {
 
         {/* Footer */}
         <p className="text-slate-400 text-xs text-center">
-          Already have an account? <span className="text-red-400 font-semibold cursor-pointer">Login</span>
+          Already have an account? <span className="text-red-400 font-semibold cursor-pointer" onClick={() => router.push("/")}>Login</span>
         </p>
       </div>
     </div>
-  )
+  );
 }
