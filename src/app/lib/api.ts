@@ -86,7 +86,15 @@ export async function getPendingBets(): Promise<PendingBet[]> {
   return response.data;
 }
 
+export async function getBetHistory(): Promise<PendingBet[]> {
+  const response = await apiClient.get<PendingBet[]>("/bet/history");
+  return response.data;
+}
 
+// export async function getBetHistory(): Promise<PendingBet[]> {
+//   const response = await apiClient.get<PendingBet[]>("/bet/history");
+//   return response.data;
+// }
 
 
 export default apiClient;

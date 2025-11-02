@@ -118,7 +118,7 @@ export default function BettingDashboard() {
 
   const handleLogout = () => {
     localStorage.removeItem("authToken");
-    window.location.href = "/login";
+    window.location.href = "/";
   };
 
   const handleModalClose = () => {
@@ -142,7 +142,7 @@ export default function BettingDashboard() {
             <div className="p-2 bg-gradient-to-br from-red-600 to-red-700 rounded-lg">
               <FaBolt className="text-white w-6 h-6" />
             </div>
-            <h1 className="text-3xl font-bold">2XBet</h1>
+            <h1 className="text-3xl font-bold">DoubleBet</h1>
           </div>
           <button
             onClick={handleLogout}
