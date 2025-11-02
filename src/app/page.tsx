@@ -113,7 +113,7 @@ export default function LoginPage() {
             <div className="p-3 bg-gradient-to-br from-red-600 to-red-700 rounded-lg">
               <FaBolt className="text-white w-6 h-6" />
             </div>
-            <h1 className="text-3xl font-bold text-white">2XBet</h1>
+            <h1 className="text-3xl font-bold text-white">DoubleBet</h1>
           </div>
           <p className="text-slate-400 text-sm mt-2">Login to your account</p>
         </div>
