@@ -285,97 +285,47 @@ export default function BettingDashboard() {
           </div>
         </div>
 
-       {/* Pending Bets Modal */}
-{isPendingModalOpen && (
-  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md p-4 animate-fadeIn">
-    <div className="bg-gradient-to-br from-slate-900/90 via-slate-800/90 to-slate-900/90 border border-slate-700/70 rounded-2xl w-full max-w-4xl p-6 shadow-2xl text-white relative overflow-hidden animate-slideUp">
-      
-      {/* Close Button */}
-      <button
-        onClick={handlePendingDetailClose}
-        className="absolute top-4 right-4 text-slate-400 hover:text-white transition"
-      >
-        <FaTimes className="w-6 h-6" />
-      </button>
-
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6 border-b border-slate-700 pb-4">
-        <h2 className="text-2xl font-bold flex items-center gap-2">
-          <FaClock className="text-yellow-400" /> Pending Bets
-        </h2>
-        <p className="text-sm text-slate-400">
-          {pendingBets.length} bet{pendingBets.length === 1 ? "" : "s"} in progress
-        </p>
-      </div>
-
-      {/* Selected Bet Detail View */}
-      {selectedPendingBet ? (
-        <div className="animate-fadeIn">
-          <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-6 space-y-3">
-            <h3 className="text-xl font-semibold mb-2">{selectedPendingBet.sportBook}</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm">
-              <p><span className="text-slate-400">Bet Code:</span> {selectedPendingBet.betCode}</p>
-              <p><span className="text-slate-400">Placed:</span> {new Date(selectedPendingBet.createdAt).toLocaleString()}</p>
-              <p><span className="text-slate-400">Amount:</span> ₦{selectedPendingBet.amount.toLocaleString()}</p>
-              <p className="text-green-400"><span className="text-slate-400">Potential Win:</span> ₦{selectedPendingBet.potentialWin.toLocaleString()}</p>
-              <p className="text-red-400"><span className="text-slate-400">Potential Loss:</span> ₦{selectedPendingBet.potentialLoss.toLocaleString()}</p>
-              <p><span className="text-slate-400">Status:</span> {selectedPendingBet.status}</p>
+        {/* Pending Bets */}
+        <div className="bg-slate-900/50 border border-slate-700 rounded-2xl p-6 shadow-lg">
+          <div className="flex items-center justify-between mb-4 border-b border-slate-700 pb-3">
+            <div className="flex items-center gap-2">
+              <FaClock className="text-yellow-400" />
+              <h3 className="text-lg font-semibold">Pending Bets</h3>
             </div>
-          </div>
-
-          <div className="mt-6 flex justify-end">
             <button
-              onClick={handlePendingDetailClose}
-              className="px-6 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg font-semibold transition"
+              onClick={() => setIsPendingModalOpen(true)}
+              className="text-sm text-slate-300 hover:text-white transition"
             >
-              Back to List
+              View All
             </button>
           </div>
-        </div>
-      ) : (
-        // All Pending Bets List
-        <div className="space-y-3 max-h-[70vh] overflow-y-auto pr-2 animate-fadeIn">
-          {pendingBets.map((bet) => (
-            <div
-              key={bet.id}
-              onClick={() => setSelectedPendingBet(bet)}
-              className="cursor-pointer flex justify-between items-center bg-slate-800/60 hover:bg-slate-800/90 border border-slate-700 rounded-xl p-4 transition-transform hover:scale-[1.01]"
-            >
-              <div>
-                <p className="font-semibold text-base">{bet.sportBook}</p>
-                <p className="text-xs text-slate-400 mt-1">Code: {bet.betCode} • {new Date(bet.createdAt).toLocaleDateString()}</p>
-              </div>
-              <div className="text-right text-sm">
-                <p className="font-medium text-slate-200">₦{bet.amount.toLocaleString()}</p>
-                <p className="text-green-400">+ ₦{bet.potentialWin.toLocaleString()}</p>
-                <p className="text-red-400">− ₦{bet.potentialLoss.toLocaleString()}</p>
-              </div>
-            </div>
-          ))}
 
-          {pendingBets.length === 0 && (
-            <p className="text-center text-slate-500 py-8">No pending bets at the moment.</p>
+          {isPendingLoading ? (
+            <p className="text-slate-500 text-sm">Loading pending bets...</p>
+          ) : pendingBets.length > 0 ? (
+            <div className="space-y-3">
+              {pendingBets.slice(0,2).map((bet) => (
+                <div
+                  key={bet.id}
+                  onClick={() => { setSelectedPendingBet(bet); setIsPendingModalOpen(true); }}
+                  className="cursor-pointer flex justify-between items-center bg-slate-800/60 border border-slate-700 rounded-lg p-3"
+                >
+                  <div>
+                    <p className="font-semibold">{bet.sportBook}</p>
+                    <p className="text-xs text-slate-400">Code: {bet.betCode} • {new Date(bet.createdAt).toLocaleDateString()}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm text-slate-300">₦{bet.amount.toLocaleString()}</p>
+                    <p className="text-xs text-green-400">Potential Win: ₦{bet.potentialWin.toLocaleString()}</p>
+                    <p className="text-xs text-red-400">Potential Loss: ₦{bet.potentialLoss.toLocaleString()}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-slate-500 text-sm">No pending bets</p>
           )}
         </div>
-      )}
-    </div>
-
-    {/* Animations */}
-    <style jsx>{`
-      @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
-      }
-      @keyframes slideUp {
-        from { transform: translateY(30px); opacity: 0; }
-        to { transform: translateY(0); opacity: 1; }
-      }
-      .animate-fadeIn { animation: fadeIn 0.4s ease-in-out; }
-      .animate-slideUp { animation: slideUp 0.35s ease-out; }
-    `}</style>
-  </div>
-)}
-
 
         {/* Bet History */}
         <div className="bg-slate-900/50 border border-slate-700 rounded-2xl p-6 shadow-lg mb-10">
