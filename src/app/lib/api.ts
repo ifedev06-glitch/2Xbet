@@ -35,6 +35,7 @@ export interface UserInfo { id: number; name: string; email: string; balance: nu
 export interface UserProfileResponse {
   name: string;
   balance: number;
+  id: number; 
 }
 
 // ---------- Auth Functions ----------
@@ -88,6 +89,46 @@ export async function getPendingBets(): Promise<PendingBet[]> {
 
 export async function getBetHistory(): Promise<PendingBet[]> {
   const response = await apiClient.get<PendingBet[]>("/bet/history");
+  return response.data;
+}
+
+// ---------- Deposit Interfaces ----------
+export interface DepositRequest {
+  amount: number;
+}
+
+export interface DepositPaystackResponse {
+  status: boolean;
+  message: string;
+  data: {
+    authorization_url: string;
+    access_code: string;
+    reference: string;
+  };
+}
+
+export interface VerifyDepositRequest {
+  reference: string;
+  userId: number;
+  amount: number;
+}
+
+
+export async function initiateDeposit(amount: number): Promise<DepositPaystackResponse> {
+  const response = await apiClient.post<DepositPaystackResponse>("/api/deposits/initiate", {
+    amount
+  });
+  return response.data;
+}
+
+export async function verifyDeposit(req: VerifyDepositRequest): Promise<string> {
+  const response = await apiClient.get<string>("/deposits/verify", {
+    params: {
+      reference: req.reference,
+      userId: req.userId,
+      amount: req.amount
+    }
+  });
   return response.data;
 }
 
