@@ -3,11 +3,12 @@
 
 export const dynamic = "force-dynamic";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { getProfile, verifyDeposit, UserProfileResponse } from "@/app/lib/api";
 
-export default function DepositCallbackPage() {
+// Separate component that uses useSearchParams
+function CallbackContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -29,9 +30,9 @@ export default function DepositCallbackPage() {
 
         // Verify deposit
         const res = await verifyDeposit({
-          reference, // reference is string here
+          reference,
           userId: profile.id,
-          amount: 0, // optional, backend can validate
+          amount: 0,
         });
 
         setMessage(res || "Payment verified successfully!");
@@ -45,7 +46,9 @@ export default function DepositCallbackPage() {
         console.error("Deposit verification failed:", err);
         setMessage("Payment verification failed.");
         setIsSuccess(false);
-         router.push("/dashboard");
+        setTimeout(() => {
+          router.push("/dashboard");
+        }, 2000);
       }
     };
 
@@ -61,5 +64,20 @@ export default function DepositCallbackPage() {
         {isSuccess !== null && <p className="text-sm text-slate-400 mt-2">Redirecting to dashboard...</p>}
       </div>
     </div>
+  );
+}
+
+// Main component with Suspense wrapper
+export default function DepositCallbackPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-slate-900 text-white p-4">
+        <div className="bg-slate-800 p-8 rounded-xl shadow-lg text-center max-w-md w-full">
+          <p>Loading...</p>
+        </div>
+      </div>
+    }>
+      <CallbackContent />
+    </Suspense>
   );
 }
