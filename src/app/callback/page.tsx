@@ -44,7 +44,7 @@ function CallbackContent() {
         }, 2000);
       } catch (err) {
         console.error("Deposit verification failed:", err);
-        setMessage("Payment verification failed.");
+        setMessage("Payment verification.");
         setIsSuccess(false);
         setTimeout(() => {
           router.push("/dashboard");
