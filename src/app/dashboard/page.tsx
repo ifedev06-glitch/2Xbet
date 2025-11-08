@@ -242,14 +242,14 @@ export default function BettingDashboard() {
             </div>
 
             <div>
-              <label htmlFor="company" className="block text-sm font-semibold mb-2">Sportsbook</label>
+              <label htmlFor="company" className="block text-sm font-semibold mb-2">Bet Company</label>
               <select
                 id="company"
                 value={selectedCompany}
                 onChange={(e) => setSelectedCompany(e.target.value)}
                 className="w-full p-3 rounded-lg bg-slate-800 border border-slate-600 focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-none text-white"
               >
-                <option value="">Choose sportsbook</option>
+                <option value="">Choose BetCompany</option>
                 {BET_COMPANIES.map((c) => (
                   <option key={c.id} value={c.name}>{c.name}</option>
                 ))}
