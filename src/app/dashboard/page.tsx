@@ -1,5 +1,6 @@
 // src/app/(your-path)/BettingDashboard.tsx
 "use client";
+import Link from "next/link";
 
 import { useState, useEffect } from "react";
 import {
@@ -209,9 +210,11 @@ export default function BettingDashboard() {
               >
                 <FaArrowUp /> Deposit
               </button>
+                        <Link href="/withdrawal">
               <button className="px-4 py-2 bg-orange-600 hover:bg-orange-700 rounded-lg font-semibold text-sm flex items-center gap-2 transition">
                 <FaArrowDown /> Withdraw
               </button>
+            </Link>
             </div>
           </div>
         </div>

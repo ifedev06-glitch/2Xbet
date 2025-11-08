@@ -138,4 +138,59 @@ export async function verifyDeposit(req: VerifyDepositRequest): Promise<string> 
 // }
 
 
+// ---------- Bank Account & Withdrawal Interfaces ----------
+export interface BankAccountRequest {
+  bankName: string;
+  accountNumber: string;
+  accountName: string;
+}
+
+export interface BankAccountResponse {
+  id: number;
+  bankName: string;
+  accountNumber: string;
+  accountName: string;
+}
+
+export interface WithdrawRequest {
+  amount: number;
+  bankAccountId: number;
+}
+
+export interface WithdrawalResponse {
+  id: number;
+  userId: number;
+  userName: string;
+  bankName: string;
+  accountNumber: string;
+  accountName: string;
+  amount: number;
+  status: "PENDING" | "COMPLETED" | "REJECTED" | "CANCELLED";
+}
+
+// ---------- Bank Account & Withdrawal Functions ----------
+export async function addBankAccount(request: BankAccountRequest): Promise<BankAccountResponse> {
+  const response = await apiClient.post<BankAccountResponse>(
+    "/api/v1/payments/bank-accounts",
+    request
+  );
+  return response.data;
+}
+
+export async function getUserBankAccounts(): Promise<BankAccountResponse[]> {
+  const response = await apiClient.get<BankAccountResponse[]>(
+    "/api/v1/payments/bank-accounts"
+  );
+  return response.data;
+}
+
+export async function requestWithdrawal(request: WithdrawRequest): Promise<WithdrawalResponse> {
+  const response = await apiClient.post<WithdrawalResponse>(
+    "/api/v1/payments/withdraw",
+    request
+  );
+  return response.data;
+}
+
+
 export default apiClient;
