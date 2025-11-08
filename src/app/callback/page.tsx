@@ -60,7 +60,7 @@ function CallbackContent() {
       <div className="bg-slate-800 p-8 rounded-xl shadow-lg text-center max-w-md w-full">
         {isSuccess === null && <p>{message}</p>}
         {isSuccess === true && <p className="text-green-400 font-semibold">{message}</p>}
-        {isSuccess === false && <p className="text-red-400 font-semibold">{message}</p>}
+        {isSuccess === false && <p className="text-green-400 font-semibold">{message}</p>}
         {isSuccess !== null && <p className="text-sm text-slate-400 mt-2">Redirecting to dashboard...</p>}
       </div>
     </div>

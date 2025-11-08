@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { FaUserAlt, FaPhoneAlt, FaLock, FaBolt } from "react-icons/fa";
+import { FaUserAlt, FaPhoneAlt, FaLock, FaBolt, FaEye, FaEyeSlash } from "react-icons/fa";
 import { signupUser, SignupRequest, SignupResponse } from "@/app/lib/api";
 import { useRouter } from "next/navigation"; // if using Next.js App Router
 
@@ -9,6 +9,7 @@ export default function SignupPage() {
   const [fullname, setFullname] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
 
@@ -112,12 +113,19 @@ export default function SignupPage() {
             <FaLock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
               id="password"
-              type="password"
+              type={showPassword ? "text" : "password"}
               placeholder="Enter your password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full pl-10 p-3 rounded-lg bg-slate-800 border border-slate-600 text-white placeholder:text-slate-500 focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-none"
+              className="w-full pl-10 pr-10 p-3 rounded-lg bg-slate-800 border border-slate-600 text-white placeholder:text-slate-500 focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-none"
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 focus:outline-none"
+            >
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </button>
           </div>
         </div>
 
@@ -143,7 +151,8 @@ export default function SignupPage() {
 
         {/* Footer */}
         <p className="text-slate-400 text-xs text-center">
-          Already have an account? <span className="text-red-400 font-semibold cursor-pointer" onClick={() => router.push("/")}>Login</span>
+          Already have an account?{" "}
+          <span className="text-red-400 font-semibold cursor-pointer" onClick={() => router.push("/")}>Login</span>
         </p>
       </div>
     </div>
