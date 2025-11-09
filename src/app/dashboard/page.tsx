@@ -237,7 +237,7 @@ export default function BettingDashboard() {
               <input
                 id="betcode"
                 type="text"
-                placeholder="Enter your bet code"
+                placeholder="Enter bet code, Min : 2.5 odds"
                 value={betCode}
                 onChange={(e) => setBetCode(e.target.value)}
                 className="w-full p-3 rounded-lg bg-slate-800 border border-slate-600 focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-none placeholder:text-slate-500 text-white"
