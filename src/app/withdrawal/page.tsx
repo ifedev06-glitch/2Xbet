@@ -288,7 +288,7 @@ export default function WithdrawalPage() {
                 className="w-full p-3 rounded-lg bg-slate-800 border border-slate-600 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none placeholder:text-slate-500 text-white"
               />
               <p className="text-xs text-slate-400 mt-1">
-                Minimum: ₦1,000 • Available: ₦{(profile?.balance ?? 0).toLocaleString()}
+                Minimum: ₦200 • Available: ₦{(profile?.balance ?? 0).toLocaleString()}
               </p>
             </div>
 
