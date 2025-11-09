@@ -75,7 +75,7 @@ export default function WithdrawalPage() {
 
     if (withdrawAmount < 10) {
       setModalType("error");
-      setModalMessage("Minimum withdrawal amount is ₦1,000");
+      setModalMessage("Minimum withdrawal amount is ₦200");
       setIsModalOpen(true);
       return;
     }
@@ -218,8 +218,8 @@ export default function WithdrawalPage() {
           <div className="bg-orange-500/10 border border-orange-500/30 rounded-lg p-4 flex gap-3 mb-6">
             <FaExclamationTriangle className="text-orange-500 w-5 h-5 mt-1" />
             <p className="text-slate-300 text-sm">
-              Withdrawals are processed manually within <span className="font-semibold">24 hours</span>.
-              Minimum withdrawal: <span className="font-semibold">₦1,000</span>
+              Withdrawals are processed manually within <span className="font-semibold">1 hour</span>.
+              Minimum withdrawal: <span className="font-semibold">₦200</span>
             </p>
           </div>
 

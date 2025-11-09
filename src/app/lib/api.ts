@@ -6,7 +6,7 @@ import { getToken } from "./auth";
 // ---------- Axios instance ----------
 const apiClient = axios.create({
   baseURL: BACKEND_BASE_URL,
-  timeout: 5000,
+  timeout: 30000,
 });
 
 // Interceptor to attach JWT token
