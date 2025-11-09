@@ -459,7 +459,7 @@ export default function BettingDashboard() {
               <input
                 id="depositAmount"
                 type="number"
-                placeholder="Enter deposit amount, Min : ₦ 100"
+                placeholder="Enter deposit amount, Min : ₦ 200"
                 value={depositAmount}
                 onChange={(e) =>
                   setDepositAmount(e.target.value === "" ? "" : Number(e.target.value))
