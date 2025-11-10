@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { useState, useEffect } from "react";
 import {
   FaBolt,
@@ -151,12 +152,13 @@ export default function BettingDashboard() {
                 <FaArrowUp className="w-3 h-3 sm:w-4 sm:h-4" />
                 <span>Deposit</span>
               </button>
-              <button
-                className="flex-1 sm:flex-none px-3 sm:px-4 py-2 bg-orange-600 hover:bg-orange-700 rounded-lg font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 transition"
-              >
-                <FaArrowDown className="w-3 h-3 sm:w-4 sm:h-4" />
-                <span>Withdraw</span>
-              </button>
+              <Link
+      href="/withdrawal"
+      className="flex-1 sm:flex-none px-3 sm:px-4 py-2 bg-orange-600 hover:bg-orange-700 rounded-lg font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 transition"
+    >
+      <FaArrowDown className="w-3 h-3 sm:w-4 sm:h-4" />
+      <span>Withdraw</span>
+    </Link>
             </div>
           </div>
         </div>
