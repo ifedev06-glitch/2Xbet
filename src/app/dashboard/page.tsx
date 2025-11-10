@@ -124,28 +124,41 @@ export default function BettingDashboard() {
     setIsPendingModalOpen(false);
   };
 
-  const handleDeposit = async () => {
-    if (depositAmount === "" || depositAmount <= 0) return;
+ const handleDeposit = async () => {
+  if (depositAmount === "" || depositAmount <= 0) return;
 
-    setIsDepositing(true);
-    try {
-      const res = await initiateDeposit(depositAmount as number);
-      if (res.status && res.data.authorization_url) {
-        window.location.href = res.data.authorization_url;
-      } else {
-        setModalMessage("Failed to start deposit. Please try again.");
-        setIsModalOpen(true);
-      }
-    } catch (err) {
-      console.error("Deposit failed:", err);
-      setModalMessage("Error initiating deposit. Try again.");
+  // Minimum and maximum validation
+  if (depositAmount < 200) {
+    setModalMessage("Minimum deposit is ₦200");
+    setIsModalOpen(true);
+    return;
+  }
+  if (depositAmount > 2000) {
+    setModalMessage("Maximum deposit is ₦2000");
+    setIsModalOpen(true);
+    return;
+  }
+
+  setIsDepositing(true);
+  try {
+    const res = await initiateDeposit(depositAmount as number);
+    if (res.status && res.data.authorization_url) {
+      window.location.href = res.data.authorization_url;
+    } else {
+      setModalMessage("Failed to start deposit. Please try again.");
       setIsModalOpen(true);
-    } finally {
-      setIsDepositing(false);
-      setIsDepositModalOpen(false);
-      setDepositAmount("");
     }
-  };
+  } catch (err) {
+    console.error("Deposit failed:", err);
+    setModalMessage("Error initiating deposit. Try again.");
+    setIsModalOpen(true);
+  } finally {
+    setIsDepositing(false);
+    setIsDepositModalOpen(false);
+    setDepositAmount("");
+  }
+};
+
 
   const isFormValid = betCode.trim().length > 0 && selectedCompany && amount !== "" && amount > 0;
 
@@ -434,22 +447,28 @@ export default function BettingDashboard() {
               <input
                 id="depositAmount"
                 type="number"
-                placeholder="Enter deposit amount, Min : ₦ 200"
+                placeholder="Enter deposit amount : ₦ 200 - ₦ 2000 Max"
                 value={depositAmount}
                 onChange={(e) => setDepositAmount(e.target.value === "" ? "" : Number(e.target.value))}
                 className="w-full p-3 rounded-lg bg-slate-800 border border-slate-600 focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none text-white"
               />
-              <button
-                onClick={handleDeposit}
-                disabled={depositAmount === "" || depositAmount <= 0 || isDepositing}
-                className={`w-full py-3 rounded-lg font-semibold transition ${
-                  depositAmount !== "" && depositAmount > 0 && !isDepositing
-                    ? "bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800"
-                    : "bg-slate-700 cursor-not-allowed"
-                }`}
-              >
-                {isDepositing ? "Processing..." : "Proceed to Paystack"}
-              </button>
+                  <button
+      onClick={handleDeposit}
+      disabled={
+        depositAmount === "" ||
+        depositAmount < 200 ||
+        depositAmount > 2000 ||
+        isDepositing
+      }
+      className={`w-full py-3 rounded-lg font-semibold transition ${
+        depositAmount !== "" && depositAmount >= 200 && depositAmount <= 2000 && !isDepositing
+          ? "bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800"
+          : "bg-slate-700 cursor-not-allowed"
+      }`}
+    >
+      {isDepositing ? "Processing..." : "Proceed to Paystack"}
+    </button>
+
             </div>
           </div>
         </div>
