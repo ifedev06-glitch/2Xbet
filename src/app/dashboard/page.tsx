@@ -1,7 +1,6 @@
 // src/app/(your-path)/BettingDashboard.tsx
 "use client";
 import Link from "next/link";
-
 import { useState, useEffect } from "react";
 import {
   FaBolt,
@@ -21,10 +20,10 @@ import {
   placeBet,
   getPendingBets,
   initiateDeposit,
+  getBetHistory,
   UserProfileResponse,
-  PendingBet,
-  getBetHistory
-} from "@/app/lib/api";  // adjust path if needed
+  PendingBet
+} from "@/app/lib/api";  // keep this unchanged
 
 export default function BettingDashboard() {
   const [profile, setProfile] = useState<UserProfileResponse | null>(null);
@@ -35,22 +34,18 @@ export default function BettingDashboard() {
   const [amount, setAmount] = useState<number | "">("");
   const [isLoading, setIsLoading] = useState(false);
 
-  // modals & states
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState<string | null>(null);
 
-  // pending bets
   const [pendingBets, setPendingBets] = useState<PendingBet[]>([]);
   const [isPendingLoading, setIsPendingLoading] = useState(true);
   const [isPendingModalOpen, setIsPendingModalOpen] = useState(false);
   const [selectedPendingBet, setSelectedPendingBet] = useState<PendingBet | null>(null);
 
-  // deposit states
   const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
   const [depositAmount, setDepositAmount] = useState<number | "">("");
   const [isDepositing, setIsDepositing] = useState(false);
 
-  // bet history
   const [betHistory, setBetHistory] = useState<PendingBet[]>([]);
   const [isHistoryLoading, setIsHistoryLoading] = useState(true);
 
@@ -87,30 +82,22 @@ export default function BettingDashboard() {
     if (!betCode.trim() || !selectedCompany || amount === "" || amount <= 0) return;
 
     setIsLoading(true);
-
     try {
-      const req = {
-        betCode: betCode.trim(),
-        sportBook: selectedCompany,
-        amount: amount as number,
-      };
+      const req = { betCode: betCode.trim(), sportBook: selectedCompany, amount: amount as number };
       const res = await placeBet(req);
 
       setModalMessage(`Bet placed successfully! Your new balance: ₦${res.newBalance.toLocaleString()}`);
       setIsModalOpen(true);
 
-      // Reset form
       setBetCode("");
       setSelectedCompany("");
       setAmount("");
 
-      // Refresh pending bets and history
       const betsData = await getPendingBets();
       setPendingBets(betsData);
       const historyData = await getBetHistory();
       setBetHistory(historyData);
 
-      // Refresh profile balance
       const profileData = await getProfile();
       setProfile(profileData);
     } catch (err) {
@@ -143,7 +130,6 @@ export default function BettingDashboard() {
     setIsDepositing(true);
     try {
       const res = await initiateDeposit(depositAmount as number);
-
       if (res.status && res.data.authorization_url) {
         window.location.href = res.data.authorization_url;
       } else {
@@ -185,44 +171,51 @@ export default function BettingDashboard() {
 
         <p className="text-slate-400 text-sm text-center">Your Ultimate Sports Betting Hub</p>
 
-        {/* Profile Card */}
-        <div className="bg-gradient-to-r from-red-900/30 to-slate-900/50 border border-slate-700 rounded-2xl p-6 shadow-lg">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-red-600/20 rounded-full border border-red-600/30">
-                <FaUserAlt className="text-red-500 w-6 h-6" />
-              </div>
-              <div>
-                <p className="text-slate-400 text-xs">Welcome back</p>
-                <h2 className="font-bold text-lg">
-                  {isProfileLoading ? "Loading…" : profile?.name ?? "Guest"}
-                </h2>
-                <p className="text-red-400 font-semibold text-base">
-                  ₦{isProfileLoading ? "..." : (profile?.balance ?? 0).toLocaleString()}
-                </p>
-              </div>
-            </div>
+{/* Profile Card */}
+<div className="bg-gradient-to-r from-red-900/30 to-slate-900/50 border border-slate-700 rounded-2xl p-6 shadow-lg">
+  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    {/* Profile Info */}
+    <div className="flex items-center gap-4">
+      <div className="p-3 bg-red-600/20 rounded-full border border-red-600/30">
+        <FaUserAlt className="text-red-500 w-6 h-6" />
+      </div>
+      <div>
+        <p className="text-slate-400 text-xs">Welcome back</p>
+        <h2 className="font-bold text-lg">
+          {isProfileLoading ? "Loading…" : profile?.name ?? "Guest"}
+        </h2>
+        <p className="text-red-400 font-semibold text-base">
+          ₦{isProfileLoading ? "..." : (profile?.balance ?? 0).toLocaleString()}
+        </p>
+      </div>
+    </div>
 
-            <div className="flex gap-3">
-              <button
-                onClick={() => setIsDepositModalOpen(true)}
-                className="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg font-semibold text-sm flex items-center gap-2 transition"
-              >
-                <FaArrowUp /> Deposit
-              </button>
-                        <Link href="/withdrawal">
-              <button className="px-4 py-2 bg-orange-600 hover:bg-orange-700 rounded-lg font-semibold text-sm flex items-center gap-2 transition">
-                <FaArrowDown /> Withdraw
-              </button>
-            </Link>
-            </div>
-          </div>
-        </div>
+    {/* Action Buttons */}
+    <div className="flex w-full sm:w-auto gap-3">
+      <button
+        onClick={() => setIsDepositModalOpen(true)}
+        className="flex-1 sm:flex-none px-4 py-3 bg-green-600 hover:bg-green-700 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition-all shadow-md hover:shadow-lg"
+      >
+        <FaArrowUp className="w-4 h-4" />
+        <span>Deposit</span>
+      </button>
+
+      <Link href="/withdrawal" className="flex-1 sm:flex-none">
+        <button
+          className="w-full px-4 py-3 bg-orange-600 hover:bg-orange-700 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition-all shadow-md hover:shadow-lg"
+        >
+          <FaArrowDown className="w-4 h-4" />
+          <span>Withdraw</span>
+        </button>
+      </Link>
+    </div>
+  </div>
+</div>
+
 
         {/* Bet Form */}
         <div className="bg-slate-900/50 border border-slate-700 rounded-2xl p-6 shadow-lg">
           <h3 className="text-xl font-semibold border-b border-slate-700 pb-4 mb-6">Place Your Bet</h3>
-
           <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 flex gap-3 mb-6">
             <FaExclamationTriangle className="text-red-500 w-5 h-5 mt-1" />
             <p className="text-slate-300 text-sm">
@@ -230,7 +223,6 @@ export default function BettingDashboard() {
               <span className="font-semibold text-orange-400">You Lose → we return half your stake</span>.
             </p>
           </div>
-
           <div className="space-y-6">
             <div>
               <label htmlFor="betcode" className="block text-sm font-semibold mb-2">Bet Code</label>
@@ -243,7 +235,6 @@ export default function BettingDashboard() {
                 className="w-full p-3 rounded-lg bg-slate-800 border border-slate-600 focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-none placeholder:text-slate-500 text-white"
               />
             </div>
-
             <div>
               <label htmlFor="company" className="block text-sm font-semibold mb-2">Bet Company</label>
               <select
@@ -258,7 +249,6 @@ export default function BettingDashboard() {
                 ))}
               </select>
             </div>
-
             <div>
               <label htmlFor="amount" className="block text-sm font-semibold mb-2">Amount (₦)</label>
               <input
@@ -266,14 +256,10 @@ export default function BettingDashboard() {
                 type="number"
                 placeholder="Enter your stake"
                 value={amount}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  setAmount(val === "" ? "" : Number(val));
-                }}
+                onChange={(e) => setAmount(e.target.value === "" ? "" : Number(e.target.value))}
                 className="w-full p-3 rounded-lg bg-slate-800 border border-slate-600 focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-none placeholder-text-slate-500 text-white"
               />
             </div>
-
             <button
               onClick={handlePlaceBet}
               disabled={!isFormValid || isLoading}
@@ -302,7 +288,6 @@ export default function BettingDashboard() {
               View All
             </button>
           </div>
-
           {isPendingLoading ? (
             <p className="text-slate-500 text-sm">Loading pending bets...</p>
           ) : pendingBets.length > 0 ? (
@@ -336,7 +321,6 @@ export default function BettingDashboard() {
             <FaHistory className="text-blue-400" />
             <h3 className="text-lg font-semibold">Bet History</h3>
           </div>
-
           {isHistoryLoading ? (
             <p className="text-slate-500 text-sm">Loading bet history...</p>
           ) : betHistory.length > 0 ? (
@@ -373,100 +357,88 @@ export default function BettingDashboard() {
         </div>
       </div>
 
+      {/* Modals */}
       {/* Success/Error Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75">
           <div className="bg-slate-900 rounded-2xl p-8 shadow-lg w-11/12 max-w-md text-center text-white">
             <FaCheckCircle className="mx-auto text-green-400 w-14 h-14 mb-4" />
             <h2 className="text-2xl font-bold mb-2">{modalMessage}</h2>
-            <button
-              onClick={handleModalClose}
-              className="mt-4 px-6 py-3 bg-green-600 hover:bg-green-700 rounded-lg font-semibold"
-            >
+            <button onClick={handleModalClose} className="mt-4 px-6 py-3 bg-green-600 hover:bg-green-700 rounded-lg font-semibold">
               OK
             </button>
           </div>
         </div>
       )}
 
-      {/* Pending Bets Modal */}
-      {isPendingModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70 p-4">
-          <div className="bg-slate-900 rounded-2xl w-full max-w-3xl p-6 shadow-xl text-white relative">
-            <button
-              onClick={handlePendingDetailClose}
-              className="absolute top-4 right-4 text-slate-400 hover:text-white"
-            >
-              <FaTimes className="w-6 h-6" />
-            </button>
+    {/* Pending Bet Modal */}
+{isPendingModalOpen && selectedPendingBet && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+    <div className="bg-gradient-to-br from-slate-950 to-slate-900 border border-slate-700 rounded-2xl shadow-2xl w-full max-w-lg p-6 sm:p-8 relative">
+      <button
+        onClick={() => setIsPendingModalOpen(false)}
+        className="absolute top-3 right-3 sm:top-4 sm:right-4 text-slate-400 hover:text-white transition text-xl"
+      >
+        ✕
+      </button>
 
-            <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-              <FaClock className="text-yellow-400" /> All Pending Bets
-            </h2>
+      <div className="flex items-center gap-2 mb-6 border-b border-slate-700 pb-3">
+        <FaClock className="text-yellow-400 text-lg sm:text-xl" />
+        <h2 className="text-lg sm:text-xl font-semibold text-white">Pending Bet Details</h2>
+      </div>
 
-            {selectedPendingBet ? (
-              <div className="mb-6">
-                <p className="font-semibold">Sportsbook: {selectedPendingBet.sportBook}</p>
-                <p className="text-sm text-slate-400">Code: {selectedPendingBet.betCode} • Placed: {new Date(selectedPendingBet.createdAt).toLocaleString()}</p>
-                <p className="mt-2"><strong>Amount:</strong> ₦{selectedPendingBet.amount.toLocaleString()}</p>
-                <p><strong>Potential Win:</strong> ₦{selectedPendingBet.potentialWin.toLocaleString()}</p>
-                <p><strong>Potential Loss:</strong> ₦{selectedPendingBet.potentialLoss.toLocaleString()}</p>
-                <p><strong>Status:</strong> {selectedPendingBet.status}</p>
-                <button
-                  className="mt-4 px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold"
-                  onClick={handlePendingDetailClose}
-                >
-                  Close
-                </button>
-              </div>
-            ) : (
-              <div className="space-y-3 max-h-[70vh] overflow-y-auto pr-2">
-                {pendingBets.map((bet) => (
-                  <div
-                    key={bet.id}
-                    onClick={() => setSelectedPendingBet(bet)}
-                    className="cursor-pointer flex justify-between items-center bg-slate-800/60 border border-slate-700 rounded-lg p-3 hover:bg-slate-800/80"
-                  >
-                    <p>{bet.sportBook} • Code: {bet.betCode}</p>
-                    <p>₦{bet.amount.toLocaleString()}</p>
-                  </div>
-                ))}
-              </div>
-            )}
+      <div className="space-y-3 text-slate-300 text-sm sm:text-base">
+        {[
+          { label: "Sportbook", value: selectedPendingBet.sportBook },
+          { label: "Bet Code", value: selectedPendingBet.betCode },
+          { label: "Stake Amount", value: `₦${selectedPendingBet.amount.toLocaleString()}`, color: "text-white font-semibold" },
+          { label: "Potential Win", value: `₦${selectedPendingBet.potentialWin.toLocaleString()}`, color: "text-green-400 font-semibold" },
+          { label: "Potential Loss", value: `₦${selectedPendingBet.potentialLoss.toLocaleString()}`, color: "text-red-400 font-semibold" },
+          { label: "Status", value: selectedPendingBet.status, color: "text-yellow-400 font-semibold" },
+        ].map((item, i) => (
+          <div
+            key={i}
+            className={`flex justify-between items-center py-2 border-b border-slate-800 last:border-0`}
+          >
+            <span className="text-slate-400">{item.label}</span>
+            <span className={`${item.color ?? "font-medium text-white"}`}>{item.value}</span>
           </div>
-        </div>
-      )}
+        ))}
+      </div>
+
+      <div className="mt-6 flex justify-end">
+        <button
+          onClick={() => setIsPendingModalOpen(false)}
+          className="px-5 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-sm text-slate-300 hover:text-white transition"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
 
       {/* Deposit Modal */}
       {isDepositModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70 p-4">
           <div className="bg-slate-900 rounded-2xl w-full max-w-md p-6 shadow-xl text-white relative">
-            <button
-              onClick={() => setIsDepositModalOpen(false)}
-              className="absolute top-4 right-4 text-slate-400 hover:text-white"
-            >
+            <button onClick={() => setIsDepositModalOpen(false)} className="absolute top-4 right-4 text-slate-400 hover:text-white">
               <FaTimes className="w-6 h-6" />
             </button>
-
             <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
               <FaArrowUp className="text-green-400" /> Make a Deposit
             </h2>
-
             <div className="space-y-4">
-              <label htmlFor="depositAmount" className="block text-sm font-semibold">
-                Amount (₦)
-              </label>
+              <label htmlFor="depositAmount" className="block text-sm font-semibold">Amount (₦)</label>
               <input
                 id="depositAmount"
                 type="number"
                 placeholder="Enter deposit amount, Min : ₦ 200"
                 value={depositAmount}
-                onChange={(e) =>
-                  setDepositAmount(e.target.value === "" ? "" : Number(e.target.value))
-                }
+                onChange={(e) => setDepositAmount(e.target.value === "" ? "" : Number(e.target.value))}
                 className="w-full p-3 rounded-lg bg-slate-800 border border-slate-600 focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none text-white"
               />
-
               <button
                 onClick={handleDeposit}
                 disabled={depositAmount === "" || depositAmount <= 0 || isDepositing}
