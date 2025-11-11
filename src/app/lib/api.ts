@@ -192,5 +192,11 @@ export async function requestWithdrawal(request: WithdrawRequest): Promise<Withd
   return response.data;
 }
 
+// ---------- Withdrawal History ----------
+export async function getUserWithdrawals(): Promise<WithdrawalResponse[]> {
+  const response = await apiClient.get<WithdrawalResponse[]>("/api/v1/payments/history");
+  return response.data;
+}
+
 
 export default apiClient;

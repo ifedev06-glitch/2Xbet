@@ -304,6 +304,15 @@ export default function WithdrawalPage() {
             >
               {isWithdrawing ? "Processing..." : "Request Withdrawal"}
             </button>
+          {/* View Withdrawal History Button */}
+          <button
+            onClick={() => window.location.href = "/withdrawalHistory"}
+            className="w-full py-3 mt-3 rounded-lg font-semibold bg-slate-800 hover:bg-slate-700 transition"
+          >
+            View Withdrawal History
+          </button>
+
+
           </div>
         </div>
 
